@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rams Park House Maslak - Video Slider</title>
+<style>
+* {box-sizing: border-box;}
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+.img-comp-container {
+  position: relative;
+  width: 320px;
+  height: 480px;
+  background: #000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.img-comp-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  overflow: hidden;
+}
+
+.img-comp-img img {
+  display: block;
+  vertical-align: middle;
+}
+
+.img-comp-slider {
+  position: absolute;
+  z-index: 9;
+  cursor: ew-resize;
+  width: 40px;
+  height: 40px;
+  background-color: #2196f3;
+  opacity: 0.7;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.img-comp-slider::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid white;
+    border-right: 2px solid white;
+    transform: rotate(45deg);
+    margin-right: 2px;
+}
+.img-comp-slider::after {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid white;
+    border-right: 2px solid white;
+    transform: rotate(-135deg);
+    margin-left: 2px;
+}
+
+.video-wrapper {
+    width: 320px;
+    height: 480px;
+    position: relative;
+    overflow: hidden;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 854px; /* 480 * 16 / 9 approx */
+    height: 480px;
+    transform: translate(-50%, -50%);
+    border: 0;
+    pointer-events: none; /* Let clicks pass through to slider if needed, but slider is on top */
+}
+
+/* Optional: Add a label or instruction */
+.instruction {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    text-shadow: 0 1px 2px black;
+    pointer-events: none;
+    z-index: 10;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+</style>
+<script>
+function initComparisons() {
+  var x, i;
+  x = document.getElementsByClassName("img-comp-overlay");
+  for (i = 0; i < x.length; i++) {
+    compareImages(x[i]);
+  }
+  function compareImages(img) {
+    var slider, clicked = 0, w, h;
+    w = img.offsetWidth;
+    h = img.offsetHeight;
+    img.style.width = (w / 2) + "px";
+
+    slider = document.createElement("DIV");
+    slider.setAttribute("class", "img-comp-slider");
+    img.parentElement.insertBefore(slider, img);
+
+    slider.style.top = (h / 2) - (slider.offsetHeight / 2) + "px";
+    slider.style.left = (w / 2) - (slider.offsetWidth / 2) + "px";
+
+    slider.addEventListener("mousedown", slideReady);
+    window.addEventListener("mouseup", slideFinish);
+    slider.addEventListener("touchstart", slideReady);
+    window.addEventListener("touchend", slideFinish);
+
+    function slideReady(e) {
+      e.preventDefault();
+      clicked = 1;
+      window.addEventListener("mousemove", slideMove);
+      window.addEventListener("touchmove", slideMove);
+    }
+    function slideFinish() {
+      clicked = 0;
+    }
+    function slideMove(e) {
+      var pos;
+      if (clicked == 0) return false;
+      pos = getCursorPos(e);
+      if (pos < 0) pos = 0;
+      if (pos > w) pos = w;
+      slide(pos);
+    }
+    function getCursorPos(e) {
+      var a, x = 0;
+      e = (e.changedTouches) ? e.changedTouches[0] : e;
+      a = img.getBoundingClientRect();
+      x = e.pageX - a.left;
+      x = x - window.pageXOffset;
+      return x;
+    }
+    function slide(x) {
+      img.style.width = x + "px";
+      slider.style.left = img.offsetWidth - (slider.offsetWidth / 2) + "px";
+    }
+  }
+}
+</script>
+</head>
+<body>
+
+<div class="img-comp-container">
+  <!-- Bottom Layer: Video -->
+  <div class="img-comp-img">
+     <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/lgrY04fDIzs?autoplay=1&mute=1&loop=1&playlist=lgrY04fDIzs&controls=0&showinfo=0&modestbranding=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+     </div>
+  </div>
+
+  <!-- Top Layer: Image -->
+  <div class="img-comp-img img-comp-overlay">
+    <img src="320x480-100.jpg" width="320" height="480" alt="Rams Park House Maslak">
+  </div>
+
+  <!-- <div class="instruction">Sürükle / Drag</div> -->
+</div>
+
+<script>
+    // Ensure images are loaded before init
+    window.onload = function() {
+        initComparisons();
+    };
+</script>
+
+</body>
+</html>
